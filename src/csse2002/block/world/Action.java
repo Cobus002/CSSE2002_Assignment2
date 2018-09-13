@@ -13,9 +13,12 @@ public class Action {
 
     private int primaryAction = -99;
     private String secondaryAction;
-    //Valid list of actions
-    private static List<String> ACTION_LIST = Arrays.asList("MOVE_BUILDER",
+    //Valid list of primary and secondary actions
+    private static List<String> PRIMARY_ACTION_LIST = Arrays.asList("MOVE_BUILDER",
             "MOVE_BLOCK", "DIG", "DROP");
+
+    private static List<String> SECONDARY_ACTION_LIST = Arrays.asList("north"
+            , "south", "east", "west");
 
 
     public Action(int primaryAction, String secondaryAction) {
@@ -52,8 +55,8 @@ public class Action {
         String[] actionsText = line.split(" ", 2);
 
         //Check that the primaryAction is valid
-        if (ACTION_LIST.contains(actionsText[0])) {
-            Action action = new Action(ACTION_LIST.indexOf(actionsText[0]),
+        if (PRIMARY_ACTION_LIST.contains(actionsText[0])) {
+            Action action = new Action(PRIMARY_ACTION_LIST.indexOf(actionsText[0]),
                     actionsText[1]);
             return action;
         } else {
