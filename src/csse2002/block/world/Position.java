@@ -1,6 +1,6 @@
 package csse2002.block.world;
 
-public class Position {
+public class Position implements Comparable<Position>{
 
     private int x, y;
 
