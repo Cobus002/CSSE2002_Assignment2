@@ -38,7 +38,6 @@ public class Action {
 
     public static Action loadAction(BufferedReader reader) throws
             ActionFormatException {
-
         String line = null;
         try {
             line = reader.readLine();
@@ -63,6 +62,20 @@ public class Action {
             throw new ActionFormatException();
 
         }
+
+    }
+
+    public static void processActions(BufferedReader reader,
+                                      WorldMap startingMap) throws
+            ActionFormatException{
+        //TODO implement function
+
+
+    }
+
+
+    public static void processAction(Action action, WorldMap map){
+        //TODO implement function
 
     }
 
