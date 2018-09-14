@@ -10,7 +10,7 @@ public class SparseTileArray {
 
     public SparseTileArray(){
         sparseTileArray = new ArrayList<>();
-        sparseTileMap = new TreeMap<>();
+        sparseTileMap = new HashMap<>();
     }
 
     public Tile getTile(Position position){
@@ -29,7 +29,7 @@ public class SparseTileArray {
             throws WorldMapInconsistentException {
 
         sparseTileMap.clear();
-
+        //Check cleared
         Position currPos = new Position(startingX, startingY);
         sparseTileMap.put(currPos, startingTile);
         //Now perform breadth-first search
@@ -38,16 +38,27 @@ public class SparseTileArray {
         Set<Position> alreadyVisited = new HashSet<>();
         nodesToVisit.add(currPos);
 
+        Map<String, Tile> exits;
+        Tile tileAtPos;
+
         while(nodesToVisit.size()!=0){
 
             currPos = nodesToVisit.remove();
-            Tile tileAtPos = sparseTileMap.get(currPos);
+            tileAtPos = sparseTileMap.get(currPos);
             //Check the setup
+            if(tileAtPos==null){
+                System.out.println("Tile at position "+currPos.toString()+" " +
+                        "is null");
+                return;
+            }
+
+
             if(!alreadyVisited.contains(currPos)){
                 //First visit
                 alreadyVisited.add(currPos);
+                exits = tileAtPos.getExits();
                 System.out.println(currPos.toString());
-                Map<String, Tile> exits = tileAtPos.getExits();
+
 
                 int currPosX = currPos.getX();
                 int currPosY = currPos.getY();
@@ -56,6 +67,7 @@ public class SparseTileArray {
                     Position newPos = new Position(currPosX, currPosY+1);
                     nodesToVisit.add(newPos);
                     sparseTileMap.put(newPos, tempTile);
+                    //Check
                 }
 
                 if(exits.containsKey("south")){
@@ -63,7 +75,7 @@ public class SparseTileArray {
                     Position newPos = new Position(currPosX, currPosY-1);
                     nodesToVisit.add(newPos);
                     sparseTileMap.put(newPos, tempTile);
-
+                    //Check
                 }
 
                 if(exits.containsKey("east")){
@@ -71,7 +83,7 @@ public class SparseTileArray {
                     Position newPos = new Position(currPosX+1, currPosY);
                     nodesToVisit.add(newPos);
                     sparseTileMap.put(newPos, tempTile);
-
+                    //Check
                 }
 
                 if(exits.containsKey("west")){
@@ -79,7 +91,7 @@ public class SparseTileArray {
                     Position newPos = new Position(currPosX-1, currPosY);
                     nodesToVisit.add(newPos);
                     sparseTileMap.put(newPos, tempTile);
-
+                    //Check
                 }
 
                 if(exits.containsKey("blah")){

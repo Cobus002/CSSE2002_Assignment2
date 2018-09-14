@@ -24,7 +24,11 @@ public class SparseTileArrayTest {
 
         tile1.addExit("north", tile2);
         tile1.addExit("east", tile3);
+
         tile2.addExit("north", tile4);
+        tile2.addExit("south", tile1);
+
+        tile3.addExit("west", tile1);
 
         SparseTileArray testTileArray = new SparseTileArray();
 
