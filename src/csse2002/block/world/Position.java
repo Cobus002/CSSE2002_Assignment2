@@ -23,7 +23,7 @@ public class Position implements Comparable<Position>{
     public boolean equals(Object obj) {
         Position otherPosition = (Position)obj;
 
-        if(getX()==otherPosition.getX() && getY() == otherPosition.getY()){
+        if((getX()==otherPosition.getX()) && (getY() == otherPosition.getY())){
             return true;
         }else{
             return false;
@@ -32,6 +32,7 @@ public class Position implements Comparable<Position>{
 
     @Override
     public int hashCode() {
+
         return (getX()*10 + getY());
     }
 
