@@ -31,13 +31,13 @@ public class SparseTileArray {
 
     private boolean checkSparseTileMapConsistent(){
         Iterator topLevelIterator = sparseTileMap.entrySet().iterator();
-        Iterator innerLevelIterator = sparseTileMap.entrySet().iterator();
 
         while(topLevelIterator.hasNext()){
             //Get the map entry
             Map.Entry<Position, Tile> pair = (Map.Entry)topLevelIterator.next();
 
             Tile tileToCheck = pair.getValue();
+            Position tileToCheckPosition = pair.getKey();
             Tile tempTile;
             boolean consistent = true;
             //Check that the nodes link back to one another
@@ -67,6 +67,7 @@ public class SparseTileArray {
             }
 
             //Check that same node doesn't have multiple positions
+            Iterator innerLevelIterator = sparseTileMap.entrySet().iterator();
             while(innerLevelIterator.hasNext()){
                 Map.Entry<Position, Tile> pairInner =
                         (Map.Entry)innerLevelIterator.next();
@@ -74,8 +75,9 @@ public class SparseTileArray {
                 Tile innerTile = pairInner.getValue();
                 Position innerTilePosition = pairInner.getKey();
 
-                if((innerTile == (Tile)pair.getValue())){
-                    //consistent=false;
+                if((innerTile == (Tile)pair.getValue())&&
+                        (innerTilePosition!=tileToCheckPosition)){
+                    consistent = false;
                 }
             }
 
@@ -168,8 +170,6 @@ public class SparseTileArray {
         //All entries added now check that they are all consistent
         if(!checkSparseTileMapConsistent()){
             throw new WorldMapInconsistentException();
-        }else {
-            System.out.println("Yay!!");
         }
     }
 }
