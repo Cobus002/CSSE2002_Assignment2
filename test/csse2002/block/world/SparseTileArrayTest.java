@@ -45,11 +45,6 @@ public class SparseTileArrayTest {
             //squash since it should have been implemented correctly work
             System.out.println("There was an error loading exits");
         }
-
-        if(tile2.getExits().get("south") == tile1){
-            System.out.println("Same");
-
-        }
         SparseTileArray testTileArray = new SparseTileArray();
 
         assertSame(tile2, tile1.getExits().get("north"));
@@ -102,16 +97,11 @@ public class SparseTileArrayTest {
             System.out.println("There was an error loading exits");
         }
 
-        if(tile2.getExits().get("south") == tile1){
-            System.out.println("Same");
-
-        }
         SparseTileArray testTileArray = new SparseTileArray();
 
         assertSame(tile2, tile1.getExits().get("north"));
         //Test the add linked tiles function
         testTileArray.addLinkedTiles(tile1, 0, 0);
 
-        //check the tiles using getTile
     }
 }

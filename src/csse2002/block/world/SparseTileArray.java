@@ -30,7 +30,6 @@ public class SparseTileArray {
 
 
     public List<Tile> getTiles(){
-        //Todo implement function
         return this.sparseTileArray;
     }
 
