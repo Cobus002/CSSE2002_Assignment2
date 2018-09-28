@@ -10,7 +10,7 @@ public class SparseTileArray {
     private static final String WEST = "west";
 
     //List for the directions to make loops easier
-    private static final List<String>  directionList = Arrays.asList(NORTH,
+    private static final List<String> DIRECTION_LIST = Arrays.asList(NORTH,
             EAST, SOUTH, WEST);
     private List<Tile> sparseTileArray;
 
@@ -40,12 +40,12 @@ public class SparseTileArray {
      * @return
      */
     private boolean checkNodeForConsistency(Tile testTile) {
-        Iterator dirIterator = directionList.iterator();
+        Iterator dirIterator = DIRECTION_LIST.iterator();
         Tile tempTile;
         while (dirIterator.hasNext()) {
             //check the direction
             String direction = (String) dirIterator.next();
-            String oppositeDirection = NORTH; //Default
+            String oppositeDirection; //Default
             if (!testTile.getExits().containsKey(direction)) {
                 //Make sure the tile does contain the exit
                 continue;
@@ -163,7 +163,7 @@ public class SparseTileArray {
 
                 int currPosX = currPos.getX();
                 int currPosY = currPos.getY();
-                Iterator dirIterator = directionList.iterator();
+                Iterator dirIterator = DIRECTION_LIST.iterator();
                 while(dirIterator.hasNext()){
                     Position newPos = new Position(0,0);//default
                     String direction = (String)dirIterator.next();
