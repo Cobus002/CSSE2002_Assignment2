@@ -32,80 +32,66 @@ public class SparseTileArray {
         return this.sparseTileArray;
     }
 
+    /***
+     * checkNodeForConsistency() function checks that if the node has a
+     * neighbour, then that neighbour links back to the node.
+     * @param testTile
+     * @return
+     */
+    private boolean checkNodeForConsistency(Tile testTile) {
+        Iterator dirIterator = directionList.iterator();
+        Tile tempTile;
+        while (dirIterator.hasNext()) {
+            //check the direction
+            String direction = (String) dirIterator.next();
+            String oppositeDirection = NORTH; //Default
+            if (!testTile.getExits().containsKey(direction)) {
+                //Make sure the tile does contain the exit
+                continue;
+            }
+            switch (direction) {
+                case NORTH:
+                    oppositeDirection = SOUTH;
+                    break;
+                case EAST:
+                    oppositeDirection = WEST;
+                    break;
+                case SOUTH:
+                    oppositeDirection = NORTH;
+                    break;
+                case WEST:
+                    oppositeDirection = EAST;
+                    break;
+                default:
+                    //Error not recognised direction
+                    return false;
+            }
+            tempTile =
+                    testTile.getExits().get(direction).getExits().
+                            get(oppositeDirection);
+            if ((tempTile == null) || (tempTile != testTile)) {
+                return false;
+            }
+        }
+
+        //If we get here all is good
+        return true;
+    }
+
+    /***
+     * checkSparseTileMapConsistent() function checks if there are no
+     * duplicate positions for a single Tile object. Returns true if there
+     * are no duplicates.
+     * @return
+     */
     private boolean checkSparseTileMapConsistent(){
         Iterator topLevelIterator = sparseTileMap.entrySet().iterator();
 
         while(topLevelIterator.hasNext()){
             //Get the map entry
             Map.Entry<Position, Tile> pair = (Map.Entry)topLevelIterator.next();
-
             Tile tileToCheck = pair.getValue();
             Position tileToCheckPosition = pair.getKey();
-            Tile tempTile;
-            boolean consistent = true;
-            //Check that the nodes link back to one another
-/*            if(tileToCheck.getExits().containsKey(NORTH)){
-                //Check if the tiles are properly linked
-                tempTile =
-                        tileToCheck.getExits().get(NORTH).getExits().get(SOUTH);
-                consistent = (tileToCheck == tempTile)? true:false;
-            }
-            if(tileToCheck.getExits().containsKey(SOUTH)){
-                tempTile =
-                        tileToCheck.getExits().get(SOUTH).getExits().get(NORTH);
-                consistent = (tileToCheck == tempTile)? true:false;
-
-            }
-            if(tileToCheck.getExits().containsKey(EAST)){
-                tempTile =
-                        tileToCheck.getExits().get(EAST).getExits().get(WEST);
-                consistent = (tileToCheck == tempTile)? true:false;
-
-            }
-
-            if(tileToCheck.getExits().containsKey(WEST)){
-                tempTile =
-                        tileToCheck.getExits().get(WEST).getExits().get(EAST);
-                consistent = (tileToCheck == tempTile)? true:false;
-            }*/
-
-            Iterator dirIterator = directionList.iterator();
-            while(dirIterator.hasNext()){
-                //check the direction
-                String direction = (String)dirIterator.next();
-                String opositeDirection = NORTH; //Default
-                if(!tileToCheck.getExits().containsKey(direction)){
-                    //Make sure the tile does contain the exit
-                    continue;
-                }
-                switch(direction){
-                    case NORTH:
-                        opositeDirection = SOUTH;
-                        break;
-                    case EAST:
-                        opositeDirection = WEST;
-                        break;
-                    case SOUTH:
-                        opositeDirection = NORTH;
-                        break;
-                    case WEST:
-                        opositeDirection = EAST;
-                        break;
-                    default:
-                        //Error not recognised direction
-                        return false;
-                }
-
-                tempTile =
-                        tileToCheck.getExits().get(direction).getExits().
-                                get(opositeDirection);
-                if((tempTile==null)||(tempTile!=tileToCheck)){
-                    return false;
-                }
-
-
-            }
-
             //Check that same node doesn't have multiple positions
             Iterator innerLevelIterator = sparseTileMap.entrySet().iterator();
             while(innerLevelIterator.hasNext()){
@@ -115,16 +101,10 @@ public class SparseTileArray {
                 Tile innerTile = pairInner.getValue();
                 Position innerTilePosition = pairInner.getKey();
 
-                if((innerTile == (Tile)pair.getValue())&&
+                if((innerTile == tileToCheck)&&
                         (innerTilePosition!=tileToCheckPosition)){
-                    consistent = false;
+                    return false;
                 }
-            }
-
-
-            if(!consistent){
-                //if one entry is inconsistent then all no good
-                return false;
             }
         }
         //if we get here then all the entries where consistent
@@ -162,13 +142,16 @@ public class SparseTileArray {
 
             currPos = nodesToVisit.remove();
             tileAtPos = sparseTileMap.get(currPos);
+            //Make sure path links back to self
+            if(!checkNodeForConsistency(tileAtPos)){
+                throw new WorldMapInconsistentException();
+            }
             //Check the setup
             if(tileAtPos==null){
                 System.out.println("Tile at position "+currPos.toString()+" " +
                         "is null");
                 return;
             }
-
             if(!alreadyVisited.contains(currPos)){
                 //First visit
                 alreadyVisited.add(currPos);
@@ -213,7 +196,7 @@ public class SparseTileArray {
             }
 
         }
-        //All entries added now check that they are all consistent
+
         if(!checkSparseTileMapConsistent()){
             //Error occurred, clear all loaded tiles
             sparseTileMap.clear();
