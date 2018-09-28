@@ -36,7 +36,6 @@ public class SparseTileArray {
         return sparseTileMap.get(position);
     }
 
-
     public List<Tile> getTiles(){
         return this.sparseTileArray;
     }
