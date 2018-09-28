@@ -2,6 +2,14 @@ package csse2002.block.world;
 
 import java.util.*;
 
+/***
+ * SparseTileArray is an array representation of tiles arranged in a linked
+ * node tree structure. The tiles are read and saved via a breadth-first
+ * search algorithm.
+ *
+ * @author Jacobus Hoffmann
+ * @version 999 =)
+ */
 public class SparseTileArray {
     //Private constants used for the exits
     private static final String NORTH = "north";
@@ -141,10 +149,9 @@ public class SparseTileArray {
         Tile tileAtPos;
 
         while(nodesToVisit.size()!=0){
-
             currPos = nodesToVisit.remove();
             tileAtPos = toVisitMap.get(currPos);
-            //Make sure path links back to self
+            //Make sure path links back to self, if not throw error and exit
             if(!checkNodeForConsistency(tileAtPos)){
                 throw new WorldMapInconsistentException();
             }

@@ -2,6 +2,13 @@ package csse2002.block.world;
 
 import java.io.FileNotFoundException;
 
+/***
+ * WorldMap class is used to load a new world map which will be manipulated
+ * and traversed by the builder.
+ *
+ * @author Jacobus Hoffmann
+ * @version 1.0
+ */
 public class WorldMap {
 
     private Builder worldBuilder;

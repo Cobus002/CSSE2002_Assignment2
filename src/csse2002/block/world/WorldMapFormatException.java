@@ -2,7 +2,10 @@ package csse2002.block.world;
 
 /***
  * WorldFormatException class is used as a throwable exception when there is
- * a format error in a WorldMapFile. 
+ * a format error in a WorldMapFile.
+ *
+ * @author Jacobus Hoffmann
+ * @version 1.0
  */
 public class WorldMapFormatException extends BlockWorldException{
 
