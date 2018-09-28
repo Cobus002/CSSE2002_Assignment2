@@ -6,10 +6,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Action {
-    static int MOVE_BUILDER = 0;
-    static int MOVE_BLOCK = 1;
-    static int DIG = 2;
-    static int DROP = 3;
+    //Constants used for actions
+    public static final int MOVE_BUILDER = 0;
+    public static final int MOVE_BLOCK = 1;
+    public static final int DIG = 2;
+    public static final int DROP = 3;
 
     private int primaryAction = -99;
     private String secondaryAction;

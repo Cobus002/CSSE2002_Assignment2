@@ -9,6 +9,9 @@ public class SparseTileArray {
     private static final String SOUTH = "south";
     private static final String WEST = "west";
 
+    //List for the directions to make loops easier
+    private static final List<String>  directionList = Arrays.asList(NORTH,
+            EAST, SOUTH, WEST);
     private List<Tile> sparseTileArray;
 
     private Map<Position, Tile> sparseTileMap;
@@ -41,7 +44,7 @@ public class SparseTileArray {
             Tile tempTile;
             boolean consistent = true;
             //Check that the nodes link back to one another
-            if(tileToCheck.getExits().containsKey(NORTH)){
+/*            if(tileToCheck.getExits().containsKey(NORTH)){
                 //Check if the tiles are properly linked
                 tempTile =
                         tileToCheck.getExits().get(NORTH).getExits().get(SOUTH);
@@ -64,6 +67,43 @@ public class SparseTileArray {
                 tempTile =
                         tileToCheck.getExits().get(WEST).getExits().get(EAST);
                 consistent = (tileToCheck == tempTile)? true:false;
+            }*/
+
+            Iterator dirIterator = directionList.iterator();
+            while(dirIterator.hasNext()){
+                //check the direction
+                String direction = (String)dirIterator.next();
+                String opositeDirection = NORTH; //Default
+                if(!tileToCheck.getExits().containsKey(direction)){
+                    //Make sure the tile does contain the exit
+                    continue;
+                }
+                switch(direction){
+                    case NORTH:
+                        opositeDirection = SOUTH;
+                        break;
+                    case EAST:
+                        opositeDirection = WEST;
+                        break;
+                    case SOUTH:
+                        opositeDirection = NORTH;
+                        break;
+                    case WEST:
+                        opositeDirection = EAST;
+                        break;
+                    default:
+                        //Error not recognised direction
+                        return false;
+                }
+
+                tempTile =
+                        tileToCheck.getExits().get(direction).getExits().
+                                get(opositeDirection);
+                if((tempTile==null)||(tempTile!=tileToCheck)){
+                    return false;
+                }
+
+
             }
 
             //Check that same node doesn't have multiple positions
@@ -92,6 +132,14 @@ public class SparseTileArray {
     }
 
 
+    /***
+     * Add a set of linked tiles to the sparseTileMap. The tiles are linked
+     * via exits "north", "east", "south" and "west".
+     * @param startingTile
+     * @param startingX
+     * @param startingY
+     * @throws WorldMapInconsistentException
+     */
     public void addLinkedTiles(Tile startingTile, int startingX,
                                int startingY)
             throws WorldMapInconsistentException {
@@ -133,16 +181,8 @@ public class SparseTileArray {
                     Tile tempTile = exits.get(NORTH);
                     Position newPos = new Position(currPosX, currPosY+1);
                     sparseTileMap.put(newPos, tempTile);
+                    sparseTileArray.add(tempTile);
                     nodesToVisit.add(newPos);
-
-                }
-
-                if(exits.containsKey(SOUTH)){
-                    Tile tempTile = exits.get(SOUTH);
-                    Position newPos = new Position(currPosX, currPosY-1);
-                    nodesToVisit.add(newPos);
-                    sparseTileMap.put(newPos, tempTile);
-                    //Check
                 }
 
                 if(exits.containsKey(EAST)){
@@ -150,7 +190,16 @@ public class SparseTileArray {
                     Position newPos = new Position(currPosX+1, currPosY);
                     nodesToVisit.add(newPos);
                     sparseTileMap.put(newPos, tempTile);
+                    sparseTileArray.add(tempTile);
                     //Check
+                }
+                if(exits.containsKey(SOUTH)){
+                    Tile tempTile = exits.get(SOUTH);
+                    Position newPos = new Position(currPosX, currPosY-1);
+                    nodesToVisit.add(newPos);
+                    sparseTileMap.put(newPos, tempTile);
+                    sparseTileArray.add(tempTile);
+
                 }
 
                 if(exits.containsKey(WEST)){
@@ -158,10 +207,7 @@ public class SparseTileArray {
                     Position newPos = new Position(currPosX-1, currPosY);
                     nodesToVisit.add(newPos);
                     sparseTileMap.put(newPos, tempTile);
-                }
-
-                if(exits.containsKey("blah")){
-                    throw new WorldMapInconsistentException();
+                    sparseTileArray.add(tempTile);
                 }
                 //Exit first visit to tile
             }
@@ -169,6 +215,9 @@ public class SparseTileArray {
         }
         //All entries added now check that they are all consistent
         if(!checkSparseTileMapConsistent()){
+            //Error occurred, clear all loaded tiles
+            sparseTileMap.clear();
+            sparseTileArray.clear();
             throw new WorldMapInconsistentException();
         }
     }
