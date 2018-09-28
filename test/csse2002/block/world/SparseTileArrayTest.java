@@ -56,8 +56,16 @@ public class SparseTileArrayTest {
         //Test the add linked tiles function
         testTileArray.addLinkedTiles(tile1, 0, 0);
 
-        //check the tiles using getTile
+        assertEquals(null, testTileArray.getTile(null));
+        assertEquals(null, testTileArray.getTile(
+                new Position(1, 2)));
 
+        //check the tile geometry using getTile()
+        assertSame(tile1, testTileArray.getTile(new Position(0,0)));
+        assertSame(tile2, testTileArray.getTile(new Position(0,1)));
+        assertSame(tile3, testTileArray.getTile(new Position(1,0)));
+        assertSame(tile4, testTileArray.getTile(new Position(0,2)));
+        assertSame(tile5, testTileArray.getTile(new Position(1,1)));
 
     }
 
@@ -105,7 +113,5 @@ public class SparseTileArrayTest {
         testTileArray.addLinkedTiles(tile1, 0, 0);
 
         //check the tiles using getTile
-
-
     }
 }

@@ -18,12 +18,14 @@ public class SparseTileArray {
 
     public SparseTileArray(){
         sparseTileArray = new ArrayList<>();
-        sparseTileMap = new HashMap<>();
+        sparseTileMap = new LinkedHashMap<>();
     }
 
     public Tile getTile(Position position){
+        if(position == null){
+            return null;
+        }
         return sparseTileMap.get(position);
-
     }
 
 
@@ -127,12 +129,13 @@ public class SparseTileArray {
         sparseTileMap.clear();
         //Check that the
 
-        Position currPos = new Position(startingX, startingY);
-        sparseTileMap.put(currPos, startingTile);
-        //Now perform breadth-first search
-
         Queue<Position> nodesToVisit = new LinkedList<>();
-        Set<Position> alreadyVisited = new HashSet<>();
+        Set<Position> alreadyVisited = new LinkedHashSet<>();
+        Map<Position, Tile> toVisitMap = new HashMap<>();
+
+        Position currPos = new Position(startingX, startingY);
+        toVisitMap.put(currPos, startingTile);
+        //Now perform breadth-first search
         nodesToVisit.add(currPos);
 
         Map<String, Tile> exits;
@@ -141,7 +144,7 @@ public class SparseTileArray {
         while(nodesToVisit.size()!=0){
 
             currPos = nodesToVisit.remove();
-            tileAtPos = sparseTileMap.get(currPos);
+            tileAtPos = toVisitMap.get(currPos);
             //Make sure path links back to self
             if(!checkNodeForConsistency(tileAtPos)){
                 throw new WorldMapInconsistentException();
@@ -155,42 +158,34 @@ public class SparseTileArray {
             if(!alreadyVisited.contains(currPos)){
                 //First visit
                 alreadyVisited.add(currPos);
+                sparseTileMap.put(currPos, tileAtPos);
+                sparseTileArray.add(tileAtPos);
                 exits = tileAtPos.getExits();
-                System.out.println(currPos.toString());
 
                 int currPosX = currPos.getX();
                 int currPosY = currPos.getY();
-                if(exits.containsKey(NORTH)){
-                    Tile tempTile = exits.get(NORTH);
-                    Position newPos = new Position(currPosX, currPosY+1);
-                    sparseTileMap.put(newPos, tempTile);
-                    sparseTileArray.add(tempTile);
-                    nodesToVisit.add(newPos);
-                }
-
-                if(exits.containsKey(EAST)){
-                    Tile tempTile = exits.get(EAST);
-                    Position newPos = new Position(currPosX+1, currPosY);
-                    nodesToVisit.add(newPos);
-                    sparseTileMap.put(newPos, tempTile);
-                    sparseTileArray.add(tempTile);
-                    //Check
-                }
-                if(exits.containsKey(SOUTH)){
-                    Tile tempTile = exits.get(SOUTH);
-                    Position newPos = new Position(currPosX, currPosY-1);
-                    nodesToVisit.add(newPos);
-                    sparseTileMap.put(newPos, tempTile);
-                    sparseTileArray.add(tempTile);
-
-                }
-
-                if(exits.containsKey(WEST)){
-                    Tile tempTile = exits.get(WEST);
-                    Position newPos = new Position(currPosX-1, currPosY);
-                    nodesToVisit.add(newPos);
-                    sparseTileMap.put(newPos, tempTile);
-                    sparseTileArray.add(tempTile);
+                Iterator dirIterator = directionList.iterator();
+                while(dirIterator.hasNext()){
+                    Position newPos = new Position(0,0);//default
+                    String direction = (String)dirIterator.next();
+                    switch (direction){
+                        case NORTH:
+                            newPos = new Position(currPosX, currPosY+1);
+                            break;
+                        case SOUTH:
+                            newPos = new Position(currPosX, currPosY-1);
+                            break;
+                        case EAST:
+                            newPos = new Position(currPosX+1, currPosY);
+                            break;
+                        case WEST:
+                            newPos = new Position(currPosX-1, currPosY);
+                            break;
+                    }
+                    if(exits.containsKey(direction)){
+                        nodesToVisit.add(newPos);
+                        toVisitMap.put(newPos, exits.get(direction));
+                    }
                 }
                 //Exit first visit to tile
             }
