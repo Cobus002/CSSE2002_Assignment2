@@ -122,14 +122,9 @@ public class WorldMap {
                 }
                 return false;
             }
-
-
-
         }
         //If we get here all is good
         return true;
-
-
     }
 
     /***
@@ -382,12 +377,30 @@ public class WorldMap {
         }
         //Add the empty line between tile and exits section
         writer.print("\n");
-        //TODO: Implement this
+        writer.print("exits\n");
+        tileIterator = getTiles().iterator();
+        while(tileIterator.hasNext()){
+            Tile currTile = (Tile) tileIterator.next();
+            writer.print(getTiles().indexOf(currTile)+" ");
+            Iterator exitsIterator = currTile.getExits().entrySet().iterator();
+            int exitsCount = currTile.getExits().size();
+            while(exitsIterator.hasNext()){
+                Map.Entry pair = (Map.Entry)exitsIterator.next();
+                String exitDir = (String) pair.getKey();
+                Tile exitTile = (Tile) pair.getValue();
+                if(exitsCount>1){
+                    writer.print(exitDir+":"+getTiles().indexOf(exitTile)+",");
+                }else{
+                    writer.print(exitDir+":"+getTiles().indexOf(exitTile)+"\n");
+                }
+                exitsCount--;
+            }
 
+        }
 
-
-
-
+        //Flush the output buffer
+        writer.flush();
+        //Close the file
         writer.close();
     }
 }
