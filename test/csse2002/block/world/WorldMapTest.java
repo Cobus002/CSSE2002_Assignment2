@@ -13,7 +13,6 @@ public class WorldMapTest {
     public void testInitialisation() throws WorldMapInconsistentException,
             WorldMapFormatException, FileNotFoundException {
         WorldMap testMap = new WorldMap("foo.in");
-
         try {
             testMap.saveMap("hello.out");
 

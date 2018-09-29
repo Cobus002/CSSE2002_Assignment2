@@ -395,7 +395,6 @@ public class WorldMap {
                 }
                 exitsCount--;
             }
-
         }
 
         //Flush the output buffer

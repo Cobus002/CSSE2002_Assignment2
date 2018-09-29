@@ -24,9 +24,7 @@ public class Action {
 
     public Action(int primaryAction, String secondaryAction) {
         this.primaryAction = primaryAction;
-        if (!(primaryAction == DROP)) {
-            this.secondaryAction = secondaryAction;
-        }
+        this.secondaryAction = secondaryAction;
     }
 
     public int getPrimaryAction() {
@@ -44,7 +42,7 @@ public class Action {
             line = reader.readLine();
         } catch (IOException e) {
             //There was an issue reading the reader
-            //TODO: Handle IOException
+            throw new ActionFormatException();
         }
 
         if (line == null) {
