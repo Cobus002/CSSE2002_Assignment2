@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /***
  * WorldMap class is used to load a new world map which will be manipulated
@@ -25,6 +25,16 @@ public class WorldMap {
     private static final String GRASS_BLOCK = "grass";
     private static final String SOIL_BLOCK = "soil";
     private static final String STONE_BLOCK = "stone";
+
+    //Private constants to save directions
+    private static final String NORTH = "north";
+    private static final String EAST = "east";
+    private static final String SOUTH = "south";
+    private static final String WEST = "west";
+
+    //List to make looping through the directions easier
+    private static final List<String> DIR_LIST = Arrays.asList(NORTH, EAST,
+            SOUTH, WEST);
 
     /***
      * Initialise the WorldMap using a startingTile positioned at a
@@ -77,7 +87,10 @@ public class WorldMap {
     }
 
     /***
-     * Initialise the WorldMap using a file.
+     * Initialise the WorldMap using a file. The world map needs to be in the
+     * specified format, else a WorldMapFormatException is thrown. If there
+     * are any inconsistencies in the tile layout a
+     * WorldMapInconsistentException is thrown.
      * @param filename
      * @throws WorldMapInconsistentException
      * @throws FileNotFoundException
@@ -89,11 +102,15 @@ public class WorldMap {
         BufferedReader buffIn = new BufferedReader(new FileReader(filename));
         int lineCount = 0;
         String line = null;
-        int startingX, startingY = 0;
+        int startingX, startingY, secondBlankLine = 0;
+        int endOfFile = 0;
+        int totalTiles = 0;
         String builderName=null;
         List<Block> startingBlocks = new LinkedList<>();
-        try {
+        List<Block> tileBlocksTempList = new LinkedList<>();
+        Map<Integer, Tile> tileMap = new LinkedHashMap<>();
 
+        try {
             while ((line = buffIn.readLine())!=null){
                 if(lineCount == 0){
                     try {
@@ -110,15 +127,100 @@ public class WorldMap {
                 }else if(lineCount == 2){
                     builderName = line;
                 }else if(lineCount == 3){
+                    //If blank then inventory is empty:
+                    if(line.equals("")){
+                        //Do nothing and just continue to the nex line
+                        continue;
+                    }
                     String inventoryList[] = line.split(",");
                     startingBlocks = stringListToBlockList(inventoryList);
                     if(startingBlocks == null){
                         throw new WorldMapFormatException();
                     }
+                }else if(lineCount==4){
+                    //This line needs to be blank
+                    if(!line.equals("")){
+                        throw new WorldMapFormatException();
+                    }
                 }
+                else if(lineCount==5){
+                    //Read in the tiles
+                    String line4[] = line.split(":", 2);
+                    if(line4.length!=2){
+                        throw new WorldMapFormatException();
+                    }
+                    if(!line4[0].equals("total")){
+                        throw new WorldMapFormatException();
+                    }
+                    try{
+                        totalTiles = Integer.parseInt(line4[1]);
+                        if(!(totalTiles>0)){
+                            throw new WorldMapFormatException();
+                        }
+                        secondBlankLine = lineCount+totalTiles+1;
+                    }catch (NumberFormatException e){
+                        throw new WorldMapFormatException();
+                    }
+                }else if(lineCount<secondBlankLine){
+                    //Create tile with blocks
+                    System.out.println(line);
+                    //Check if missing lines are present
+                    if(line.equals("")){
+                        throw new WorldMapFormatException();
+                    }
+                    String tileLine[] = line.split(" ", 2);
+                    tileBlocksTempList.clear();
+                    tileBlocksTempList =
+                            stringListToBlockList(tileLine[1].split(","));
+                    if (tileBlocksTempList==null){
+                        //Error occured, may have invalid block type
+                        throw new WorldMapFormatException();
+                    }else{
+                        try {
+                            Tile tempTile = new Tile(tileBlocksTempList);
+                            Integer tempInt = Integer.parseInt(tileLine[0]);
+                            if(!(tempInt>0) || (tempInt>(totalTiles-1))){
+                                throw new NumberFormatException();
+                            }
+                            tileMap.put(tempInt, tempTile);
+                        }catch(Exception e){
+                            if(e instanceof TooHighException){
+                                System.out.println("Loadind WorldMap too many " +
+                                    "blocks on tile:"+tileLine[0]);
+
+                            }else if(e instanceof NumberFormatException){
+                                System.out.println("Not valid integer on " +
+                                        "line: "+lineCount+" -> "+line);
+                            }
+                            throw new WorldMapFormatException();
+                        }
+                        //If we get here we are good...
+                    }
+                }else if(lineCount==secondBlankLine){
+                    //Check that this line is in fact blank
+                    if(!line.equals("")){
+                        throw new WorldMapFormatException();
+                    }
+                }else if(lineCount==(secondBlankLine+1)){
+                    //this must be the start of the exits
+                    if(!line.equals("exits")){
+                        throw new WorldMapFormatException();
+                    }
+                    endOfFile = lineCount+totalTiles+1;
+                }else if(lineCount<endOfFile){
+                    //Check for empty line, not valid
+                    if(line.equals("")){
+                        throw new WorldMapFormatException();
+                    }
+
+                }
+                lineCount++;
             }
         } catch (IOException e){
             System.err.println("Error: "+ e);
+            //Can't throw an IOException, not sure what to throw so throw
+            // File not found exception.
+            throw new FileNotFoundException();
         }
 
     }
