@@ -114,6 +114,10 @@ public class Action {
                                       WorldMap startingMap) throws
             ActionFormatException{
         //TODO implement function
+        Action action;
+        while((action=loadAction(reader)) != null){
+            processAction(action, startingMap);
+        }
     }
 
 
