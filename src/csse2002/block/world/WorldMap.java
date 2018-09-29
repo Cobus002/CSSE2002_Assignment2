@@ -1,9 +1,6 @@
 package csse2002.block.world;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -87,6 +84,55 @@ public class WorldMap {
     }
 
     /***
+     * This addExitsToTile() function takes a tile map, an id and a string of
+     * exits. It then attempts to add the exits in the string to the tile
+     * with id in the tileMap. The function returns true on success and false
+     * if an error occurs.
+     * @param tileMap
+     * @param tileId
+     * @param exits
+     * @return
+     */
+    private boolean addExitsToTile(Map<Integer, Tile> tileMap,
+                                Integer tileId,  String exits){
+        //Format:<name1>:<id1>,<name2>:<id2>, ... ,<nameN>:<idN>
+
+        Tile tileToUpdate = tileMap.get(tileId);
+        if(tileToUpdate==null){
+            return false;
+        }
+
+        String exitsArray[] = exits.split(",");
+        for(int i=0; i<exitsArray.length; i++){
+            String tempString[] = exitsArray[i].split(":", 2);
+            if(!DIR_LIST.contains(tempString[0])){
+                return false;
+            }
+            try{
+                Integer tempId = Integer.parseInt(tempString[1]);
+                Tile tempTile = tileMap.get(tempId);
+                tileMap.get(tileId).addExit(tempString[0], tempTile);
+
+            }catch(Exception e){
+                if(e instanceof NumberFormatException){
+                    System.err.println("Not valid number");
+                }else if(e instanceof NullPointerException){
+                    System.err.println("Null pointer exception triggered");
+
+                }
+                return false;
+            }
+
+
+
+        }
+        //If we get here all is good
+        return true;
+
+
+    }
+
+    /***
      * Initialise the WorldMap using a file. The world map needs to be in the
      * specified format, else a WorldMapFormatException is thrown. If there
      * are any inconsistencies in the tile layout a
@@ -102,7 +148,9 @@ public class WorldMap {
         BufferedReader buffIn = new BufferedReader(new FileReader(filename));
         int lineCount = 0;
         String line = null;
-        int startingX, startingY, secondBlankLine = 0;
+        int startingX=0;
+        int startingY=0;
+        int secondBlankLine = 0;
         int endOfFile = 0;
         int totalTiles = 0;
         String builderName=null;
@@ -179,7 +227,7 @@ public class WorldMap {
                         try {
                             Tile tempTile = new Tile(tileBlocksTempList);
                             Integer tempInt = Integer.parseInt(tileLine[0]);
-                            if(!(tempInt>0) || (tempInt>(totalTiles-1))){
+                            if(!(tempInt>=0) || (tempInt>(totalTiles-1))){
                                 throw new NumberFormatException();
                             }
                             tileMap.put(tempInt, tempTile);
@@ -213,6 +261,31 @@ public class WorldMap {
                         throw new WorldMapFormatException();
                     }
 
+                    String exitsLine[]=line.split(" ", 2);
+                    try{
+                        int id = Integer.parseInt(exitsLine[0]);
+                        //check that the id is non negative and is within N-1
+                        // range
+                        if(!(id>=0) || id>(totalTiles-1)){
+                            throw new NumberFormatException();
+                        }
+                        if(!addExitsToTile(tileMap, id, exitsLine[1])){
+                            //Error occured adding the exits to the tile
+                            throw new WorldMapFormatException();
+                        }
+                    }catch (Exception e){
+                        if(e instanceof NumberFormatException){
+                            System.err.println(e);
+                        }
+                        //Always throw this error since it is a problem with
+                        // the file format.
+                        throw new WorldMapFormatException();
+                    }
+                }else if(lineCount>endOfFile){
+                    //There shouldn't be anymore text so throw a
+                    // WorldFormatException
+                    throw new WorldMapFormatException();
+
                 }
                 lineCount++;
             }
@@ -222,6 +295,99 @@ public class WorldMap {
             // File not found exception.
             throw new FileNotFoundException();
         }
+        //If we get here all the data has been successfully loaded.
+        //May still have inconsistency errors
+        if(startingBlocks.size()>0){
+            try {
+                worldBuilder = new Builder(builderName, tileMap.get(0), startingBlocks);
+            }catch (InvalidBlockException e){
+                throw new WorldMapFormatException();
+            }
+        }else {
+            worldBuilder = new Builder(builderName, tileMap.get(0));
+        }
+        //Now populate the WorldMap variables
+        worldStartPosition = new Position(startingX, startingY);
+        worldTileArray = new SparseTileArray();
+        worldTileArray.addLinkedTiles(tileMap.get(0), startingX, startingY);
+        System.out.println("Finished loading the map");
+    }
 
+
+    public Builder getBuilder(){
+        return this.worldBuilder;
+    }
+
+    public Position getStartPosition(){
+        return this.worldStartPosition;
+    }
+
+    public Tile getTile(Position position){
+        return this.worldTileArray.getTile(position);
+    }
+
+    public List<Tile> getTiles(){
+        return this.worldTileArray.getTiles();
+    }
+
+    /**
+     * This saveMap() function saves the current WolrdMap state in text
+     * format in the filename provided. The format of the saved file will be
+     * the same as for reading a saved file.
+     * @param filename
+     * @throws IOException
+     */
+    public void saveMap(String filename) throws IOException {
+        PrintWriter writer = new PrintWriter(new FileWriter(filename));
+
+        //Print the start position to the file
+        writer.print(worldStartPosition.getX()+"\n");
+        writer.print(worldStartPosition.getY()+"\n");
+        writer.print(worldBuilder.getName()+"\n");
+        int inventoryCount = worldBuilder.getInventory().size();
+        int blockCount = 0;
+        Iterator inventoryIterator = worldBuilder.getInventory().iterator();
+        while(inventoryIterator.hasNext()){
+            Block currBlock = (Block) inventoryIterator.next();
+            if(blockCount<inventoryCount-1){
+                writer.print(currBlock.getBlockType()+",");
+            }else{
+                writer.print(currBlock.getBlockType()+"\n");
+            }
+            blockCount++;
+        }
+        //Print empty line to the file
+        writer.print("\n");
+        //Now for the tiles in the WorldMap
+        int tileCount = getTiles().size();
+        writer.print("total:"+tileCount+"\n");
+        Iterator tileIterator = getTiles().iterator();
+        while(tileIterator.hasNext()){
+            Tile currTile = (Tile) tileIterator.next();
+            int tileIndex = getTiles().indexOf(currTile);
+            System.out.println("Tile index is: "+tileIndex);
+            writer.print(tileIndex+" ");
+
+            int tileBlockCount = currTile.getBlocks().size();
+            Iterator tileBlocksIterator = currTile.getBlocks().iterator();
+            while(tileBlocksIterator.hasNext()){
+                Block currBlock = (Block) tileBlocksIterator.next();
+                if(tileBlockCount>1){
+                    writer.print(currBlock.getBlockType()+",");
+                }else {
+                    writer.print(currBlock.getBlockType() + "\n");
+                }
+                tileBlockCount--;
+            }
+        }
+        //Add the empty line between tile and exits section
+        writer.print("\n");
+        //TODO: Implement this
+
+
+
+
+
+        writer.close();
     }
 }
