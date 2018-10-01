@@ -21,14 +21,23 @@ public class SparseTileArray {
     private static final List<String> DIRECTION_LIST = Arrays.asList(NORTH,
             EAST, SOUTH, WEST);
     private List<Tile> sparseTileArray;
-
+    //Private sparseTileMap used in the game
     private Map<Position, Tile> sparseTileMap;
 
+    /**
+     * Default constructor for the SparseTileArray class which initialises
+     * the class sparseTileArray and sparseTileMap as empty.
+     */
     public SparseTileArray() {
         sparseTileArray = new ArrayList<>();
         sparseTileMap = new LinkedHashMap<>();
     }
 
+    /**
+     * getTile() method returns a tile for the given position.
+     * @param position
+     * @return
+     */
     public Tile getTile(Position position) {
         if (position == null) {
             return null;
@@ -36,6 +45,11 @@ public class SparseTileArray {
         return sparseTileMap.get(position);
     }
 
+    /**
+     * getTiles() returns a breadth-first ordered list of tiles that are
+     * currently available.
+     * @return
+     */
     public List<Tile> getTiles() {
         return this.sparseTileArray;
     }

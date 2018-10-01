@@ -12,7 +12,7 @@ import java.util.*;
  * @version 1.0
  */
 public class WorldMap {
-
+    //Private varaibles used in the WorldMap
     private Builder worldBuilder;
     private Position worldStartPosition;
     private SparseTileArray worldTileArray;
@@ -52,6 +52,10 @@ public class WorldMap {
     }
 
     /**
+     * stringListToBlockList() function is just a helper function used in the
+     * WorldMap(filename) constructor. It returns a List of blocks given an
+     * array of Strings. If there are invalid blocks types the function
+     * returns null.
      * @param stringListOfBlocks
      * @return
      */
@@ -319,18 +323,37 @@ public class WorldMap {
     }
 
 
+    /**
+     * getBuilder() function to return the current world Builder.
+     * @return
+     */
     public Builder getBuilder() {
         return this.worldBuilder;
     }
 
+    /**
+     * getStartPosition() function is used to get the start position of the
+     * current WorldMap.
+     * @return
+     */
     public Position getStartPosition() {
         return this.worldStartPosition;
     }
 
+    /**
+     * getTile() is used to get the tile at the position given.
+     * @param position
+     * @return
+     */
     public Tile getTile(Position position) {
         return this.worldTileArray.getTile(position);
     }
 
+    /**
+     * getTiles() function is used to get a breadth-first ordered List of
+     * tiles that are currently loaded into the WorldMap.
+     * @return
+     */
     public List<Tile> getTiles() {
         return this.worldTileArray.getTiles();
     }

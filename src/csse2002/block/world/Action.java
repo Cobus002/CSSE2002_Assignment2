@@ -5,6 +5,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The Action class is used to set up an action which can be performed on the
+ * WorldMap.
+ *
+ * @author Jacobus Hoffmann
+ * @version 1.0
+ */
 public class Action {
     //Constants used for actions
     public static final int MOVE_BUILDER = 0;
