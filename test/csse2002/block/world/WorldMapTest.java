@@ -18,13 +18,13 @@ public class WorldMapTest {
         File mapDir = new File(mapsPath);
         File dirListings[] = mapDir.listFiles();
         WorldMap tempMap;
-        for(File file:dirListings){
-            try{
-                tempMap = new WorldMap(mapsPath+"/"+file.getName());
-                System.out.println("Success: "+file.getName());
-            }catch(Exception e) {
+        for (File file : dirListings) {
+            try {
+                tempMap = new WorldMap(mapsPath + "/" + file.getName());
+                System.out.println("Success: " + file.getName());
+            } catch (Exception e) {
 
-                System.err.println(file.getName()+ ": " + e);
+                System.err.println(file.getName() + ": " + e);
             }
         }
 

@@ -126,7 +126,6 @@ public class Action {
     public static void processActions(BufferedReader reader,
                                       WorldMap startingMap) throws
             ActionFormatException {
-        //TODO implement function
         Action action;
         while ((action = loadAction(reader)) != null) {
             processAction(action, startingMap);
@@ -168,7 +167,9 @@ public class Action {
                     break;
             }
         } catch (Exception e) {
-            if (e instanceof NoExitException) {
+            if (e instanceof NoExitException &&
+                    (SECONDARY_ACTION_LIST.
+                            contains(action.getSecondaryAction()))) {
                 System.out.println(ERR_MSG_NO_EXIT);
             } else if (e instanceof TooHighException) {
                 System.out.println(ERR_MSG_TOO_HIGH);

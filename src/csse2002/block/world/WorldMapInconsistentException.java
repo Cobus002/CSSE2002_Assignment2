@@ -7,7 +7,7 @@ package csse2002.block.world;
  * @author Jacobus Hoffmann
  * @version 1.0
  */
-public class WorldMapInconsistentException extends Exception {
+public class WorldMapInconsistentException extends BlockWorldException {
 
     /**
      * Default constructor
@@ -15,7 +15,6 @@ public class WorldMapInconsistentException extends Exception {
     public WorldMapInconsistentException(){
 
     }
-
     /**
      * Constructor with message that can is printed when the exception is
      * thrown.
