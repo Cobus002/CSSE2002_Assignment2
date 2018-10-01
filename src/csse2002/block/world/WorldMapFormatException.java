@@ -7,12 +7,12 @@ package csse2002.block.world;
  * @author Jacobus Hoffmann
  * @version 1.0
  */
-public class WorldMapFormatException extends BlockWorldException{
+public class WorldMapFormatException extends BlockWorldException {
 
     /***
      * Default WorldMapFormatException constructor
      */
-    public WorldMapFormatException(){
+    public WorldMapFormatException() {
     }
 
     /***
@@ -20,7 +20,7 @@ public class WorldMapFormatException extends BlockWorldException{
      * out.
      * @param message
      */
-    public WorldMapFormatException(String message){
-        System.out.println("WorldMapFormatException: "+message);
+    public WorldMapFormatException(String message) {
+        System.out.println("WorldMapFormatException: " + message);
     }
 }

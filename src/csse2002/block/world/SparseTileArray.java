@@ -24,19 +24,19 @@ public class SparseTileArray {
 
     private Map<Position, Tile> sparseTileMap;
 
-    public SparseTileArray(){
+    public SparseTileArray() {
         sparseTileArray = new ArrayList<>();
         sparseTileMap = new LinkedHashMap<>();
     }
 
-    public Tile getTile(Position position){
-        if(position == null){
+    public Tile getTile(Position position) {
+        if (position == null) {
             return null;
         }
         return sparseTileMap.get(position);
     }
 
-    public List<Tile> getTiles(){
+    public List<Tile> getTiles() {
         return this.sparseTileArray;
     }
 
@@ -92,25 +92,26 @@ public class SparseTileArray {
      * are no duplicates.
      * @return
      */
-    private boolean checkSparseTileMapConsistent(){
+    private boolean checkSparseTileMapConsistent() {
         Iterator topLevelIterator = sparseTileMap.entrySet().iterator();
 
-        while(topLevelIterator.hasNext()){
+        while (topLevelIterator.hasNext()) {
             //Get the map entry
-            Map.Entry<Position, Tile> pair = (Map.Entry)topLevelIterator.next();
+            Map.Entry<Position, Tile> pair =
+                    (Map.Entry) topLevelIterator.next();
             Tile tileToCheck = pair.getValue();
             Position tileToCheckPosition = pair.getKey();
             //Check that same node doesn't have multiple positions
             Iterator innerLevelIterator = sparseTileMap.entrySet().iterator();
-            while(innerLevelIterator.hasNext()){
+            while (innerLevelIterator.hasNext()) {
                 Map.Entry<Position, Tile> pairInner =
-                        (Map.Entry)innerLevelIterator.next();
+                        (Map.Entry) innerLevelIterator.next();
 
                 Tile innerTile = pairInner.getValue();
                 Position innerTilePosition = pairInner.getKey();
 
-                if((innerTile == tileToCheck)&&
-                        (innerTilePosition!=tileToCheckPosition)){
+                if ((innerTile == tileToCheck) &&
+                        (innerTilePosition != tileToCheckPosition)) {
                     return false;
                 }
             }
@@ -147,20 +148,20 @@ public class SparseTileArray {
         Map<String, Tile> exits;
         Tile tileAtPos;
 
-        while(nodesToVisit.size()!=0){
+        while (nodesToVisit.size() != 0) {
             currPos = nodesToVisit.remove();
             tileAtPos = toVisitMap.get(currPos);
             //Make sure path links back to self, if not throw error and exit
-            if(!checkNodeForConsistency(tileAtPos)){
+            if (!checkNodeForConsistency(tileAtPos)) {
                 throw new WorldMapInconsistentException();
             }
             //Check the setup
-            if(tileAtPos==null){
-                System.out.println("Tile at position "+currPos.toString()+" " +
+            if (tileAtPos == null) {
+                System.out.println("Tile at position " + currPos.toString() + " " +
                         "is null");
                 return;
             }
-            if(!alreadyVisited.contains(currPos)){
+            if (!alreadyVisited.contains(currPos)) {
                 //First visit
                 alreadyVisited.add(currPos);
                 sparseTileMap.put(currPos, tileAtPos);
@@ -170,24 +171,24 @@ public class SparseTileArray {
                 int currPosX = currPos.getX();
                 int currPosY = currPos.getY();
                 Iterator dirIterator = DIRECTION_LIST.iterator();
-                while(dirIterator.hasNext()){
-                    Position newPos = new Position(0,0);//default
-                    String direction = (String)dirIterator.next();
-                    switch (direction){
+                while (dirIterator.hasNext()) {
+                    Position newPos = new Position(0, 0);//default
+                    String direction = (String) dirIterator.next();
+                    switch (direction) {
                         case NORTH:
-                            newPos = new Position(currPosX, currPosY+1);
+                            newPos = new Position(currPosX, currPosY + 1);
                             break;
                         case SOUTH:
-                            newPos = new Position(currPosX, currPosY-1);
+                            newPos = new Position(currPosX, currPosY - 1);
                             break;
                         case EAST:
-                            newPos = new Position(currPosX+1, currPosY);
+                            newPos = new Position(currPosX + 1, currPosY);
                             break;
                         case WEST:
-                            newPos = new Position(currPosX-1, currPosY);
+                            newPos = new Position(currPosX - 1, currPosY);
                             break;
                     }
-                    if(exits.containsKey(direction)){
+                    if (exits.containsKey(direction)) {
                         nodesToVisit.add(newPos);
                         toVisitMap.put(newPos, exits.get(direction));
                     }
@@ -197,7 +198,7 @@ public class SparseTileArray {
 
         }
 
-        if(!checkSparseTileMapConsistent()){
+        if (!checkSparseTileMapConsistent()) {
             //Error occurred, clear all loaded tiles
             sparseTileMap.clear();
             sparseTileArray.clear();

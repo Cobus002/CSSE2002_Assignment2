@@ -1,31 +1,31 @@
 package csse2002.block.world;
 
-public class Position implements Comparable<Position>{
+public class Position implements Comparable<Position> {
 
     private int x, y;
 
-    public Position(int x, int y){
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
 
     }
 
-    public int getX(){
+    public int getX() {
         return this.x;
     }
 
-    public int getY(){
+    public int getY() {
         return this.y;
     }
 
 
     @Override
     public boolean equals(Object obj) {
-        Position otherPosition = (Position)obj;
+        Position otherPosition = (Position) obj;
 
-        if((getX()==otherPosition.getX()) && (getY() == otherPosition.getY())){
+        if ((getX() == otherPosition.getX()) && (getY() == otherPosition.getY())) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -33,28 +33,28 @@ public class Position implements Comparable<Position>{
     @Override
     public int hashCode() {
 
-        return (getX()*10 + getY());
+        return (getX() * 10 + getY());
     }
 
-    public int compareTo(Position other){
-        if(getX()<other.getX()){
+    public int compareTo(Position other) {
+        if (getX() < other.getX()) {
             return -1;
 
-        }else if(getX()>other.getX()){
+        } else if (getX() > other.getX()) {
             return 1;
 
-        }else if(getY()<other.getX()){
+        } else if (getY() < other.getX()) {
             return -1;
 
-        }else if(getY() > other.getY()){
+        } else if (getY() > other.getY()) {
             return 1;
 
-        }else{
+        } else {
             return 0;
         }
     }
 
-    public String toString(){
-        return "("+getX()+", "+getY()+")";
+    public String toString() {
+        return "(" + getX() + ", " + getY() + ")";
     }
 }

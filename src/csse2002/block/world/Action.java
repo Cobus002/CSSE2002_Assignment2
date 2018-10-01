@@ -19,8 +19,8 @@ public class Action {
     private static final String MOVE_BLOCK_STR = "MOVE_BLOCK";
     private static final String DIG_STR = "DIG";
     private static final String DROP_STR = "DROP";
-    private static List<String> PRIMARY_ACTION_LIST = Arrays.asList("MOVE_BUILDER",
-            "MOVE_BLOCK", "DIG", "DROP");
+    private static List<String> PRIMARY_ACTION_LIST = Arrays.asList(
+            "MOVE_BUILDER", "MOVE_BLOCK", "DIG", "DROP");
     private static List<String> SECONDARY_ACTION_LIST = Arrays.asList("north"
             , "south", "east", "west");
     //Error messages
@@ -34,7 +34,6 @@ public class Action {
     private static final String DROP_MSG = "Dropped a block from inventory";
     private static final String MOVE_BLOCK_MSG = "Moved block ";
     private static final String MOVE_BUILDER_MSG = "Moved builder ";
-
 
 
     public Action(int primaryAction, String secondaryAction) {
@@ -54,6 +53,7 @@ public class Action {
      * loadAction() function attempts to load an action from a BufferedReader
      * . The only valid actions can be seen in the PRIMARY_ACTIONS_LIST, any
      * other text will throw an ActionFormatException.
+     *
      * @param reader
      * @return
      * @throws ActionFormatException
@@ -73,21 +73,20 @@ public class Action {
             return null;
         }
         String actionsText[] = line.split(" ", 2);
-        if(actionsText.length>2){
+        if (actionsText.length > 2) {
             //there is an error
             throw new ActionFormatException();
         }
 
-        if(!PRIMARY_ACTION_LIST.contains(actionsText[0])){
+        if (!PRIMARY_ACTION_LIST.contains(actionsText[0])) {
             //the primary action is not recognised
             throw new ActionFormatException();
         }
-
         //all checks performed now create the action
-        if(actionsText[0].equals(MOVE_BLOCK_STR) ||
+        if (actionsText[0].equals(MOVE_BLOCK_STR) ||
                 actionsText[0].equals(MOVE_BUILDER_STR) ||
-                actionsText[0].equals(DROP_STR)){
-            if(actionsText.length!=2){
+                actionsText[0].equals(DROP_STR)) {
+            if (actionsText.length != 2) {
                 //Error no secondary action listed
                 throw new ActionFormatException();
             }
@@ -95,8 +94,8 @@ public class Action {
                     new Action(PRIMARY_ACTION_LIST.indexOf(actionsText[0]),
                             actionsText[1]);
             return action;
-        }else if(actionsText[0].equals(DIG_STR)){
-            if(actionsText.length!=1){
+        } else if (actionsText[0].equals(DIG_STR)) {
+            if (actionsText.length != 1) {
                 //There should be no secondary action for dig
                 throw new ActionFormatException();
             }
@@ -104,8 +103,7 @@ public class Action {
                     new Action(PRIMARY_ACTION_LIST.indexOf(actionsText[0]),
                             "");
             return action;
-
-        }else{
+        } else {
             return null;
         }
     }
@@ -113,26 +111,28 @@ public class Action {
     /**
      * Perform a given action read in from the buffered reader on the
      * WorldMap given by startingMap.
+     *
      * @param reader
      * @param startingMap
      * @throws ActionFormatException
      */
     public static void processActions(BufferedReader reader,
                                       WorldMap startingMap) throws
-            ActionFormatException{
+            ActionFormatException {
         //TODO implement function
         Action action;
-        while((action=loadAction(reader)) != null){
+        while ((action = loadAction(reader)) != null) {
             processAction(action, startingMap);
         }
     }
 
     /**
      * Process a given action on a WorldMAp given by map
+     *
      * @param action
      * @param map
      */
-    public static void processAction(Action action, WorldMap map){
+    public static void processAction(Action action, WorldMap map) {
         try {
             Builder myBuilder = map.getBuilder();
             switch (action.getPrimaryAction()) {
@@ -156,22 +156,22 @@ public class Action {
                             myBuilder.getCurrentTile().getExits().
                                     get(action.secondaryAction);
                     myBuilder.moveTo(tileToMoveTo);
-                    System.out.println(MOVE_BUILDER_MSG+action.secondaryAction);
+                    System.out.println(MOVE_BUILDER_MSG +
+                            action.secondaryAction);
                     break;
             }
-        }catch (Exception e){
-            if(e instanceof NoExitException){
+        } catch (Exception e) {
+            if (e instanceof NoExitException) {
                 System.out.println(ERR_MSG_NO_EXIT);
-            }else if(e instanceof TooHighException){
+            } else if (e instanceof TooHighException) {
                 System.out.println(ERR_MSG_TOO_HIGH);
-            }else if(e instanceof TooLowException){
+            } else if (e instanceof TooLowException) {
                 System.out.println(ERR_MSG_TOO_LOW);
-            }else if(e instanceof InvalidBlockException){
+            } else if (e instanceof InvalidBlockException) {
                 System.out.println(ERR_MSG_INV_BLOCK);
-            }else{
+            } else {
                 System.out.println(ERR_MSG_INV_ACTION);
             }
         }
-
     }
 }

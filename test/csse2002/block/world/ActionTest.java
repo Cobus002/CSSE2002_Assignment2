@@ -17,14 +17,14 @@ public class ActionTest {
     }
 
     @Test
-    public void loadAction() throws ActionFormatException{
+    public void loadAction() throws ActionFormatException {
 
         //open the file with all the
         BufferedReader in;
 
         try {
-            in = new BufferedReader(new FileReader("foo.in"));
-        }catch(FileNotFoundException e){
+            in = new BufferedReader(new FileReader("actions.in"));
+        } catch (FileNotFoundException e) {
             //File not found
             return;
         }

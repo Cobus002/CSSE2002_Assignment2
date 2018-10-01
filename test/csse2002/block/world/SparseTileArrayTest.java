@@ -15,7 +15,7 @@ public class SparseTileArrayTest {
     }
 
     @Test
-    public void addLinkedTiles() throws WorldMapInconsistentException{
+    public void addLinkedTiles() throws WorldMapInconsistentException {
 
         Tile tile1 = new Tile();
         Tile tile2 = new Tile();
@@ -41,7 +41,7 @@ public class SparseTileArrayTest {
             tile5.addExit("south", tile3);
 
 
-        }catch (NoExitException e) {
+        } catch (NoExitException e) {
             //squash since it should have been implemented correctly work
             System.out.println("There was an error loading exits");
         }
@@ -56,16 +56,16 @@ public class SparseTileArrayTest {
                 new Position(1, 2)));
 
         //check the tile geometry using getTile()
-        assertSame(tile1, testTileArray.getTile(new Position(0,0)));
-        assertSame(tile2, testTileArray.getTile(new Position(0,1)));
-        assertSame(tile3, testTileArray.getTile(new Position(1,0)));
-        assertSame(tile4, testTileArray.getTile(new Position(0,2)));
-        assertSame(tile5, testTileArray.getTile(new Position(1,1)));
+        assertSame(tile1, testTileArray.getTile(new Position(0, 0)));
+        assertSame(tile2, testTileArray.getTile(new Position(0, 1)));
+        assertSame(tile3, testTileArray.getTile(new Position(1, 0)));
+        assertSame(tile4, testTileArray.getTile(new Position(0, 2)));
+        assertSame(tile5, testTileArray.getTile(new Position(1, 1)));
 
     }
 
-    @Test (expected = WorldMapInconsistentException.class)
-    public void addLinkedTilesInconsistentT1() throws WorldMapInconsistentException{
+    @Test(expected = WorldMapInconsistentException.class)
+    public void addLinkedTilesInconsistentT1() throws WorldMapInconsistentException {
 
         Tile tile1 = new Tile();
         Tile tile2 = new Tile();
@@ -92,7 +92,7 @@ public class SparseTileArrayTest {
             tile5.addExit("south", tile3);
 
 
-        }catch (NoExitException e) {
+        } catch (NoExitException e) {
             //squash since it should have been implemented correctly work
             System.out.println("There was an error loading exits");
         }
