@@ -11,7 +11,7 @@ public class Action {
     public static final int MOVE_BLOCK = 1;
     public static final int DIG = 2;
     public static final int DROP = 3;
-
+    //Global variables used to update primary and secondary actions
     private int primaryAction = -99;
     private String secondaryAction;
     //Valid list of primary and secondary actions
@@ -29,7 +29,6 @@ public class Action {
     private static final String ERR_MSG_TOO_LOW = "Too low";
     private static final String ERR_MSG_INV_BLOCK = "Cannot use that block";
     private static final String ERR_MSG_INV_ACTION = "Error: Invalid action";
-
     //Action messages
     private static final String DIG_MSG = "Top block on current tile removed";
     private static final String DROP_MSG = "Dropped a block from inventory";
@@ -51,6 +50,14 @@ public class Action {
         return this.secondaryAction;
     }
 
+    /**
+     * loadAction() function attempts to load an action from a BufferedReader
+     * . The only valid actions can be seen in the PRIMARY_ACTIONS_LIST, any
+     * other text will throw an ActionFormatException.
+     * @param reader
+     * @return
+     * @throws ActionFormatException
+     */
     public static Action loadAction(BufferedReader reader) throws
             ActionFormatException {
         String line = null;
@@ -120,14 +127,12 @@ public class Action {
         }
     }
 
-
     /**
      * Process a given action on a WorldMAp given by map
      * @param action
      * @param map
      */
     public static void processAction(Action action, WorldMap map){
-        //TODO implement function
         try {
             Builder myBuilder = map.getBuilder();
             switch (action.getPrimaryAction()) {
@@ -165,7 +170,6 @@ public class Action {
                 System.out.println(ERR_MSG_INV_BLOCK);
             }else{
                 System.out.println(ERR_MSG_INV_ACTION);
-
             }
         }
 
